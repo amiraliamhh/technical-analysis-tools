@@ -34,23 +34,6 @@ def calcAvgUpwardOrDownward(changes, period=14):
 
     def sum(x, y):
         return x + y
-    
-    for i in range(period - 1, len(changes)):
-        sumOfChanges = functools.reduce(sum, changes[i - (period - 1):(i + 1)])
-        avg.append(sumOfChanges / period)
-
-    return avg
-
-def calcAvgUpwardOrDownward2(changes, period=14):
-    if period <= 0:
-        raise Exception('period can\'t be equal to or lower than 0')
-
-    avg = []
-    if len(changes) < period:
-        return None
-
-    def sum(x, y):
-        return x + y
 
     for i in range(period - 1, len(changes)):
         if len(avg) >= i - period and len(avg) >= 1:
@@ -78,3 +61,17 @@ def calcRSI(relativeStrengths):
         rsis.append(100 - (100 / (relativeStrengths[i] + 1)))
 
     return rsis
+
+def calculateRSI(close_prices, period=14):
+    changes = calcChanges(close_prices)
+
+    upwards = calcUpwardMovements(changes)
+    downwards = calcDownwardMovements(changes)
+
+    avgUp = calcAvgUpwardOrDownward(upwards, period)
+    avgDown = calcAvgUpwardOrDownward(downwards, period)
+
+    relativeStrength = calcRelativeStrength(avgUp, avgDown)
+    rsi = calcRSI(relativeStrength)
+
+    return rsi

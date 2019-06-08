@@ -1,8 +1,1 @@
-from .calc_rsi import (calcChanges, 
-calcUpwardMovements, 
-calcDownwardMovements,
-calcAvgUpwardOrDownward,
-calcAvgUpwardOrDownward2,
-calcRelativeStrength,
-calcRSI,
-)
+from .calc_rsi import calculateRSI

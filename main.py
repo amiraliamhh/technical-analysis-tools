@@ -1,43 +1,21 @@
-import calc_rsi
+from calc_rsi import calculateRSI
+from simulation import simulate
+from rest import requests
+from fastapi import FastAPI
 
-CLOSE_PRICES = [
-    16.66,
-    16.85,
-    16.93,
-    16.98,
-    17.08,
-    17.030001,
-    17.09,
-    16.76,
-    16.67,
-    16.719999,
-    16.860001,
-    16.85,
-    16.870001,
-    16.9,
-    16.92,
-    16.860001,
-    16.74,
-    16.73,
-    16.82,
-]
+app = FastAPI()
 
-changes = calc_rsi.calcChanges(CLOSE_PRICES)
+@app.get('/sanity')
+def sanity():
+    return { 'msg': 'success' }
 
-upwards = calc_rsi.calcUpwardMovements(changes)
-downwards = calc_rsi.calcDownwardMovements(changes)
+@app.post('/calculate-rsi')
+def calculate_rsi(body: requests.CalculateRSIParams):
+    rsi = calculateRSI(body.close_prices)
+    return { "data": rsi }
 
-avgUp = calc_rsi.calcAvgUpwardOrDownward(upwards)
-avgDown = calc_rsi.calcAvgUpwardOrDownward(downwards)
+@app.post('/simulate')
+def simulateTrade(body: requests.CalculateRSIParams):
+    charge = simulate(body.close_prices)
+    return { "charge": charge }
 
-avgUp2 = calc_rsi.calcAvgUpwardOrDownward2(upwards)
-avgDown2 = calc_rsi.calcAvgUpwardOrDownward2(downwards)
-
-relativeStrength = calc_rsi.calcRelativeStrength(avgUp, avgDown)
-relativeStrength2 = calc_rsi.calcRelativeStrength(avgUp2, avgDown2)
-
-rsis1 = calc_rsi.calcRSI(relativeStrength)
-rsis2 = calc_rsi.calcRSI(relativeStrength2)
-
-print(rsis1)
-print(rsis2)
