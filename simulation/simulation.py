@@ -1,32 +1,36 @@
 from calc_rsi import calculateRSI
 
 # TODO: make it a class
-def simulate(close_prices, period=14):
-    rsi = calculateRSI(close_prices)
-    chargeInStable = 1000
-    charge = chargeInStable / close_prices[0]
-    chargeInStable = 0 
-    
-    def sell(index, cs, c):
-        indexOfClosePrice = index + period
-        cs = c * close_prices[indexOfClosePrice]
-        return cs
+class Simulate:
+    def __init__(self, close_prices, period=14, overbought=70, oversell=30):
+        self.close_prices = close_prices
+        self.period = period
+        self.overbought = overbought
+        self.oversell = oversell
+        self.charge = 1000 / close_prices[0]
+        self.chargeInStable = 0
+        self.rsi = calculateRSI(close_prices)
 
-    def buy(index, cs, c):
-        indexOfClosePrice = index + period
-        c = cs / close_prices[indexOfClosePrice]
-        return c
+    def sell(self, index):
+        indexOfClosePrice = index + self.period
+        self.chargeInStable = self.charge * self.close_prices[indexOfClosePrice]
+        self.charge = 0
 
-    for i in range(len(rsi)):
-        if rsi[i] > 70 and charge > 0:
-            chargeInStable = sell(i, chargeInStable, charge)
-            charge = 0
+    def buy(self, index):
+        indexOfClosePrice = index + self.period
+        self.charge = self.chargeInStable / self.close_prices[indexOfClosePrice]
+        self.chargeInStable = 0
 
-        elif rsi[i] < 30 and chargeInStable > 0:
-            charge = buy(i, chargeInStable, charge)
-            chargeInStable = 0
+    def simulate(self):
+        for i in range(len(self.rsi)):
+            if self.rsi[i] > 70 and self.charge > 0:
+                self.sell(i)
 
-    if chargeInStable == 0:
-        chargeInStable = charge * close_prices[-1]
+            elif self.rsi[i] < 30 and self.chargeInStable > 0:
+                self.buy(i)
 
-    return chargeInStable
+        chargeInStable = self.chargeInStable
+        if chargeInStable == 0:
+            chargeInStable = self.charge * self.close_prices[-1]
+        
+        return chargeInStable

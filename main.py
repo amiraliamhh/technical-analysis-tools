@@ -1,7 +1,7 @@
 from calc_rsi import calculateRSI
-from simulation import simulate
 from rest import requests
 from fastapi import FastAPI
+import simulation
 
 app = FastAPI()
 
@@ -16,6 +16,6 @@ def calculate_rsi(body: requests.CalculateRSIParams):
 
 @app.post('/simulate')
 def simulateTrade(body: requests.CalculateRSIParams):
-    charge = simulate(body.close_prices)
+    s = simulation.Simulate(body.close_prices, 14, 70, 30)
+    charge = s.simulate()
     return { "charge": charge }
-
