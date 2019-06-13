@@ -20,7 +20,9 @@ def calcStreak(close_prices=[]):
     return streaks
 
 def calculateStreakRSI(close_prices, period=14):
-    streakChanges = calcStreak(close_prices)
+    streaks = calcStreak(close_prices)
+
+    streakChanges = [streaks[0]] + calcChanges(streaks)
 
     upwards = calcUpwardMovements(streakChanges)
     downwards = calcDownwardMovements(streakChanges)
@@ -50,18 +52,18 @@ def calculateRelativeMagnitude(dailyReturns=[], lookbackPeriod=100):
         for j in range(i - lookbackPeriod, i):
             if dailyReturns[j] > dailyReturns[i]:
                 count += 1
-        relativeMagnitude.append(count)
+        relativeMagnitude.append(((lookbackPeriod - count) / lookbackPeriod) * 100)
 
     return relativeMagnitude
 
-def calculateConnorsRSI(close_prices=[], lookbackPeriod=100, period=14):
+def calculateConnorsRSI(close_prices, lookbackPeriod, period):
     dailyReturn = calculateDailyReturn(close_prices)
     
     relativeMagnitude = calculateRelativeMagnitude(dailyReturn, lookbackPeriod)
     calculatedRSI = calculateRSI(close_prices, period)
-    rsi = calculatedRSI[lookbackPeriod - period:-1]
+    rsi = calculatedRSI[lookbackPeriod - (period - 1):]
     calculatedStreakRSI = calculateStreakRSI(close_prices, period)
-    streakRSI = calculatedStreakRSI[lookbackPeriod - period:-1]
+    streakRSI = calculatedStreakRSI[lookbackPeriod - (period - 1):]
 
     connors = []
 

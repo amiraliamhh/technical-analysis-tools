@@ -11,7 +11,7 @@ def sanity():
 
 @app.post('/calculate-rsi')
 def calculate_rsi(body: requests.CalculateRSIParams):
-    rsi = calculateRSI(body.close_prices)
+    rsi = calculateRSI(body.close_prices, body.period)
     return { "data": rsi }
 
 @app.post('/simulate')

@@ -38,7 +38,7 @@ def calcAvgUpwardOrDownward(changes, period=14):
 
     for i in range(period - 1, len(changes)):
         if len(avg) >= i - period and len(avg) >= 1:
-            avg.append((avg[i - period] * 13 + changes[i]) / 14)
+            avg.append((avg[i - period] * (period - 1) + changes[i]) / period)
         else:
             sumOfChanges = functools.reduce(sum, changes[i - (period - 1):(i + 1)])
             avg.append(sumOfChanges / period)
