@@ -1,5 +1,6 @@
 import functools
 
+# (i + 1) - i
 def calcChanges(closePrices):
     changes = []
     for i in range(1, len(closePrices)):

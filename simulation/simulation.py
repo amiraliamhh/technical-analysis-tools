@@ -1,6 +1,5 @@
 from calc_rsi import calculateRSI
 
-# TODO: make it a class
 class Simulate:
     def __init__(self, close_prices, period=14, overbought=70, oversell=30):
         self.close_prices = close_prices
