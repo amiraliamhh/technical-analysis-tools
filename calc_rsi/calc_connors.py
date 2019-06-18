@@ -56,7 +56,7 @@ def calculateRelativeMagnitude(dailyReturns=[], lookbackPeriod=100):
 
     return relativeMagnitude
 
-def calculateConnorsRSI(close_prices, lookbackPeriod, period):
+def calculateConnorsRSI(close_prices=[], lookbackPeriod=100, period=3):
     dailyReturn = calculateDailyReturn(close_prices)
     
     relativeMagnitude = calculateRelativeMagnitude(dailyReturn, lookbackPeriod)

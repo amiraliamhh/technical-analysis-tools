@@ -52,7 +52,7 @@ def calcRelativeStrength(avgUp, avgDown):
     relativeStrength = []
 
     for i in range(len(avgUp)):
-        relativeStrength.append(avgUp[i] / avgDown[i])
+        relativeStrength.append(avgUp[i] / (avgDown[i] or 1))
 
     return relativeStrength
 
