@@ -75,13 +75,19 @@
         </v-flex>
         <v-flex xs4>
           <v-text-field
+            v-model="aggregate"
+            label="Hour aggregation"
+          />
+        </v-flex>
+        <v-flex xs4>
+          <v-text-field
             v-model="coin"
             label="Coin"
           />
         </v-flex>
         <v-flex xs4>
           <v-text-field
-            v-model="rsiPeriod"
+            v-model="connorsRsiPeriod"
             label="RSI Period"
           />
         </v-flex>
@@ -93,11 +99,29 @@
         </v-flex>
         <v-flex xs4>
           <v-text-field
+            v-model="overbought"
+            label="Overbough percentage"
+          />
+        </v-flex>
+        <v-flex xs4>
+          <v-text-field
+            v-model="oversell"
+            label="Oversold percentage"
+          />
+        </v-flex>
+        <!-- <v-flex xs4>
+          <v-text-field
             v-model="budget"
             label="Starting budget ($)"
           />
+        </v-flex> -->
+        <v-btn color="info" @click="simulateConnors" >Simulate</v-btn>
+
+        <v-flex xs4>
+          <h3 class="simulation-results" v-if="simulationResult" >
+            value: ${{ Math.round(simulationResult * 100) / 100 }} (starting with $1000)
+          </h3>
         </v-flex>
-        <v-btn color="info" >Simulate</v-btn>
       </v-tab-item>
     </v-tabs>
       
@@ -118,22 +142,29 @@
 </template>
 
 <script>
-const BaseURL = 'http://127.0.0.1:8000';
+import qs from 'query-string';
+
+const BaseURL = 'http://127.0.0.1:4000';
 
 export default {
   data() {
     return {
       active: null,
+      aggregate: 4,
       budget: 1000,
       closePrices: [],
       closePricesJSON: null,
       coin: 'BTC',
+      connorsRsiPeriod: 3,
       errorMsg: null,
+      lastNHours: 2000,
+      lookbackPeriod: 100,
+      overbought: 70,
+      oversell: 30,
       results: null,
       rsiClosePrices: [],
       rsiPeriod: 14,
-      lastNHours: 2000,
-      lookbackPeriod: 100,
+      simulationResult: null,
       simulate: false,
     };
   },
@@ -180,10 +211,27 @@ export default {
       }
     },
     next() {
-      console.log('hereee');
       this.results = null;
       const active = parseInt(this.active, 0);
       this.active = (active < 2 ? active + 1 : 0);
+    },
+    async simulateConnors() {
+      const query = qs.stringify({
+        coin: this.coin,
+        limit: this.lastNHours,
+        aggregate: this.aggregate,
+        lookback_period: this.lookbackPeriod,
+        period: this.connorsRsiPeriod,
+        overbought: this.overbought,
+        oversell: this.oversell,
+      });
+      try {
+        const { data: { results } } = await this.$http.get(`${BaseURL}/gateway/v1.0/simulate/connors?${query}`);
+        this.simulationResult = results;
+      } catch (e) {
+        const error = e.toJSON();
+        this.errorMsg = error.message.toString();
+      }
     },
     validateClosePrices() {
       try {
@@ -200,7 +248,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.tab-item, .results {
+.tab-item, .results, .simulation-results {
   margin-top: 2em;
 }
 </style>
