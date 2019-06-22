@@ -9,3 +9,5 @@ class CalculateRSIParams(BaseModel):
 
 class CalculateConnorsRSIParams(CalculateRSIParams):
     lookback_period: int
+    overbought: int
+    oversell: int

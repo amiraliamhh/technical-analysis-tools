@@ -1,15 +1,15 @@
 from calc_rsi import calculateRSI, calculateConnorsRSI
 
 class Simulate:
-    def __init__(self, close_prices, period=14, overbought=70, oversell=30):
+    def __init__(self, close_prices, period=14, overbought=70, oversell=30, lookback_period=100):
         self.close_prices = close_prices
         self.period = period
         self.overbought = overbought
         self.oversell = oversell
         self.charge = 1000 / close_prices[0]
         self.chargeInStable = 0
-        self.rsi = calculateRSI(close_prices)
-        self.connors = calculateConnorsRSI(close_prices, period=period)
+        self.rsi = calculateRSI(close_prices, period=period)
+        self.connors = calculateConnorsRSI(close_prices, period=period, lookbackPeriod=lookback_period)
 
     def sell(self, index):
         indexOfClosePrice = index + self.period

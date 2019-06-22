@@ -29,12 +29,12 @@ def calcStreaks(body: requests.CalculateConnorsRSIParams):
 
 @app.post('/simulate-rsi')
 def simulateTrade(body: requests.CalculateRSIParams):
-    s = simulation.Simulate(body.close_prices, 14, 70, 30)
+    s = simulation.Simulate(body.close_prices, body.period, 70, 30)
     charge = s.simulateBasedOnRSI()
     return { "charge": charge }
 
 @app.post('/simulate-connors')
 def simulateTradeConnors(body: requests.CalculateConnorsRSIParams):
-    s = simulation.Simulate(body.close_prices, 3, 70, 30)
+    s = simulation.Simulate(close_prices=body.close_prices, period=body.period, lookback_period=body.lookback_period, oversell=body.oversell, overbought=body.overbought)
     charge = s.simulateBasedOnConnors()
     return { "charge": charge }
