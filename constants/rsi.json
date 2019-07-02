@@ -1,0 +1,5 @@
+{
+    "default_period": 14,
+    "lookback_period": 100,
+    "connors_period": 3
+}
