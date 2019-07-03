@@ -2,7 +2,10 @@
 import pika
 import json
 import psycopg2
-from decide import Decider
+import redis
+from bot import Decider
+
+r = redis.Redis(host='localhost', port=6379, db='takeprofits')
 
 conn = psycopg2.connect("dbname=cryptoc user=cryptoc password=1234asdf")
 cur = conn.cursor()
@@ -31,12 +34,16 @@ def callback(ch, method, properties, body):
     """, { 'tableName': pair })
     candles = cur.fetchall()
     decider = Decider(candles, pair.close, isTuple=True)
-    if decider.decision() == -1:
+    decision = decider.decision()
+    if decision == -1:
         # send buy signal
         pass
     else:
         # save take profit in redis
-        pass
+        saved = r.set(pair, decision)
+        if not saved:
+            # handle error
+            pass
 
 channel.basic_consume(
     queue='candlestick', on_message_callback=callback, auto_ack=True)
