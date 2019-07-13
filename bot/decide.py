@@ -7,8 +7,12 @@ class Decider(MeanBIndex):
         self.take_profit_period = take_profit_period
 
     # -1 -> buy
+    # 0 -> do nothing
     def decision(self):
-        if self.connors[-1] < 30:
-            return -1
+        if len(self.connors):
+            if self.connors[-1] < 30:
+                return -1
+
+            return self.takeProfit(self.buy_price, n=self.take_profit_period)
         
-        return self.takeProfit(self.buy_price, n=self.take_profit_period)
+        return 0

@@ -29,7 +29,7 @@ class MeanBIndex:
         afterBearsRedBIndex = []
 
         if isTuple:
-            self.closes = map(lambda candle: candle[Close], candles)
+            self.closes = list(map(lambda candle: candle[Close], candles))
             self.connors = calculateConnorsRSI(self.closes, lookback_period, period)
             
             for i in range(1, len(self.connors)):
